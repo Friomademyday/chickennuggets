@@ -966,3 +966,47 @@
             <span>Latency State: Minimal (0.004s)</span>
         </div>
     </footer>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const themeButton = document.getElementById('themeButton');
+
+        themeButton.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                htmlElement.setAttribute('data-theme', 'light');
+                themeButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="18.36" x2="5.64" y2="19.78"></line><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line></svg>`;
+            } else {
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeButton.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+            }
+        });
+
+        function initiateFlashCountdown() {
+            let totalSeconds = 2 * 3600 + 41 * 60 + 19;
+            
+            const hoursDisplay = document.getElementById('hours');
+            const minutesDisplay = document.getElementById('minutes');
+            const secondsDisplay = document.getElementById('seconds');
+
+            const trackingInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(trackingInterval);
+                    return;
+                }
+                totalSeconds--;
+
+                let computedHours = Math.floor(totalSeconds / 3600);
+                let computedMinutes = Math.floor((totalSeconds % 3600) / 60);
+                let computedSeconds = totalSeconds % 60;
+
+                hoursDisplay.textContent = String(computedHours).padStart(2, '0');
+                minutesDisplay.textContent = String(computedMinutes).padStart(2, '0');
+                secondsDisplay.textContent = String(computedSeconds).padStart(2, '0');
+            }, 1000);
+        }
+
+        initiateFlashCountdown();
+    </script>
+</body>
+</html>
