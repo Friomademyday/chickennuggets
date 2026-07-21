@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orbiting Sphere</title>
+    <title>Orbiting Neon Sphere</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,8 @@
         html, body {
             width: 100%;
             height: 100vh;
-            background-color: #000000;
+            /* Added a subtle radial gradient for background depth */
+            background: radial-gradient(circle at center, #0a1512 0%, #000000 70%);
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -70,18 +71,30 @@
         const lonLines = 16;
 
         function render() {
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, width, height);
+            // Clear canvas completely to let the CSS background show through
+            ctx.clearRect(0, 0, width, height);
 
             const centerX = width / 2;
             const centerY = height / 2;
             const currentRadius = Math.min(width, height) * 0.36;
 
+            // Setup Neon Glow
+            const neonColor = '#00ff88'; // Bright neon green
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = neonColor;
+            ctx.strokeStyle = neonColor;
+            ctx.lineWidth = 1;
+
+            // Optional: Inner dark circle to hide the background grid lines slightly
             ctx.beginPath();
             ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
-            ctx.fillStyle = '#222222';
+            ctx.fillStyle = 'rgba(0, 10, 5, 0.6)'; 
             ctx.fill();
 
+            // Store node coordinates to draw the glowing dots later
+            let nodes = [];
+
+            // Draw Latitude Lines (Horizontal)
             for (let i = 1; i < latLines; i++) {
                 let phi = (i / latLines) * Math.PI - Math.PI / 2;
                 let yOffset = currentRadius * Math.sin(phi);
@@ -89,11 +102,10 @@
 
                 ctx.beginPath();
                 ctx.ellipse(centerX, centerY + yOffset, ringRadius, ringRadius * 0.2, 0, 0, Math.PI * 2);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 1;
                 ctx.stroke();
             }
 
+            // Draw Longitude Lines (Vertical)
             for (let i = 0; i < lonLines; i++) {
                 let theta = (i / lonLines) * Math.PI * 2 + angle;
                 
@@ -111,16 +123,35 @@
                         ctx.lineTo(screenX, screenY);
                     }
                 }
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 1;
                 ctx.stroke();
+
+                // Calculate node positions along this longitude
+                for (let j = 1; j < latLines; j++) {
+                    let phi = (j / latLines) * Math.PI - Math.PI / 2;
+                    let x = currentRadius * Math.cos(phi) * Math.sin(theta);
+                    // Match the 2D tilt of the latitude ellipses (0.2 ratio)
+                    let y = currentRadius * Math.sin(phi) + (currentRadius * Math.cos(phi) * 0.2 * Math.cos(theta));
+                    
+                    nodes.push({x: centerX + x, y: centerY + y});
+                }
             }
 
+            // Draw Outer Border
             ctx.beginPath();
             ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
+
+            // Draw the Glowing Vertices (Dots)
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#ffffff'; 
+            ctx.fillStyle = '#ffffff'; // White core for the dots
+
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            });
 
             angle += 0.0005;
 
