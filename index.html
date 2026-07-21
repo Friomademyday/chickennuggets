@@ -37,13 +37,21 @@
 
         let width, height;
 
+
         function resizeCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width * window.devicePixelRatio;
-            canvas.height = height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // Get actual CSS dimensions
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    // Set internal canvas display size
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    // Reset transform matrix and apply DPR scale cleanly
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
+        
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
