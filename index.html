@@ -4,35 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glow Geodesic Icosphere</title>
-
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    html, body {
-        width: 100%;
-        height: 100vh;
-        background: radial-gradient(circle at center, #051811 0%, #000000 75%);
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        html, body {
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at center, #051811 0%, #000000 75%);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-        /* Hardware-accelerated glow effect */
-        filter: drop-shadow(0 0 8px rgba(0, 255, 119, 0.6));
-        will-change: transform;
-    }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
     </style>
-
-    
 </head>
 <body>
     <canvas id="sphereCanvas"></canvas>
@@ -44,12 +38,11 @@
         let width, height;
 
         function resizeCanvas() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    ctx.scale(dpr, dpr);
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * window.devicePixelRatio;
+            canvas.height = height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -128,7 +121,7 @@
         }
 
         // Build a 2-subdivision Icosphere
-        const mesh = subdivide(createIcosahedron(), 3);
+        const mesh = subdivide(createIcosahedron(), 2);
 
         // Extract Unique Edges for Drawing Lines
         const edgeSet = new Set();
@@ -180,7 +173,8 @@
             const neonGreen = '#00ff77';
 
             // Draw Triangular Edges
-            
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = neonGreen;
             ctx.strokeStyle = neonGreen;
 
             edges.forEach(([v1Idx, v2Idx]) => {
@@ -199,7 +193,8 @@
             });
 
             // Draw Glowing Nodes at Triangle Vertices
-            
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#ffffff';
             ctx.fillStyle = '#ffffff';
 
             projectedVertices.forEach(v => {
